@@ -1,6 +1,7 @@
 # Example: GitHub Actions workflow for skill-review
 #
 # Copy this to .github/workflows/skill-review.yml in your repo.
+# Assumes the skill-review/ directory is at your repo root.
 # For other CI systems, adapt the same `npm run skill-review` command
 # with the appropriate --provider flag and env vars.
 
@@ -23,6 +24,9 @@ permissions:
 jobs:
   skill-review:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skill-review
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +36,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: skill-review/package-lock.json
 
       - run: npm ci
 
