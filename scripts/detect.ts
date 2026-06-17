@@ -94,7 +94,7 @@ export function getChangedSkillFiles(root: string): string[] {
         .filter(Boolean);
     }
   } catch {
-    // Non-git environment — can't detect changes
+    // Non-git environment - can't detect changes
     return [];
   }
 

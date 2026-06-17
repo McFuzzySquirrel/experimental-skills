@@ -47,7 +47,7 @@ export const githubProvider: Provider = {
     const repo = extractRepo();
 
     if (!token) {
-      errors.push("GITHUB_TOKEN not set — cannot post PR comments");
+      errors.push("GITHUB_TOKEN not set - cannot post PR comments");
       return { posted: 0, errors };
     }
 
@@ -142,7 +142,7 @@ export const githubProvider: Provider = {
             }
           }
         } catch {
-          // If we can't post inline, that's okay — summary comment is enough
+          // If we can't post inline, that's okay - summary comment is enough
         }
       }
 

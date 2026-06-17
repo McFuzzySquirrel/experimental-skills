@@ -1,6 +1,6 @@
 # mcfuzzy-skills
 
-A skill template toolkit. Currently provides **skill-review** — audit your project's skills against [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices) and get inline PR guidance.
+A skill template toolkit. Currently provides **skill-review** - audit your project's skills against [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices) and get inline PR guidance.
 
 ## skill-review
 
@@ -25,7 +25,7 @@ npm run skill-review -- --provider github --min-score 1.5 --fail-below
 
 ### CI examples
 
-The script is CI-agnostic — it reads git diff and standard env vars. Example workflows:
+The script is CI-agnostic - it reads git diff and standard env vars. Example workflows:
 
 ```bash
 # Any CI: just run it with your provider
@@ -38,20 +38,16 @@ Full CI example files:
 
 | File | CI system |
 |------|-----------|
-| `ci-examples/github-actions.yml` | GitHub Actions — copy to `.github/workflows/` |
-| `ci-examples/azure-pipelines.yml` | Azure DevOps — copy to `azure-pipelines.yml` |
+| `ci-examples/github-actions.yml` | GitHub Actions - copy to `.github/workflows/` |
+| `ci-examples/azure-pipelines.yml` | Azure DevOps - copy to `azure-pipelines.yml` |
 
 ### Rubric
 
 Each skill is scored 1–3 on six axes:
 
-- **Context economy** — avoids generic fundamentals the agent already knows
-- **Gotchas coverage** — concrete, environment-specific edge cases
-- **Procedural clarity** — teaches *how* rather than declaring *what*
-- **Progressive disclosure** — offloads reference material to `references/` or `assets/`
-- **Calibration** — prescriptiveness matched to task fragility
-- **Validation** — self-check steps the agent can run
-
-## Template skill
-
-`templates/skills/skill-review/SKILL.md` is the de-branded, generic version of the skill audit template — anyone can drop it into their project's skill directory as an AI-agent instruction.
+- **Context economy** - avoids generic fundamentals the agent already knows
+- **Gotchas coverage** - concrete, environment-specific edge cases
+- **Procedural clarity** - teaches *how* rather than declaring *what*
+- **Progressive disclosure** - offloads reference material to `references/` or `assets/`
+- **Calibration** - prescriptiveness matched to task fragility
+- **Validation** - self-check steps the agent can run

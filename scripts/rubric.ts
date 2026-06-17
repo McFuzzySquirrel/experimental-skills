@@ -235,7 +235,7 @@ function checkStructural(
     );
     if (nestedHint && nestedHint.length > 0) {
       issues.push(
-        "Potential nested reference chain detected — keep to one level of depth",
+        "Potential nested reference chain detected - keep to one level of depth",
       );
     }
   }
@@ -263,7 +263,7 @@ export function auditSkill(input: AuditInput): SkillAudit {
   try {
     rawFm = matter(skillMd).data as Record<string, unknown>;
   } catch {
-    // gray-matter parsing failed — rawFm stays empty
+    // gray-matter parsing failed - rawFm stays empty
   }
 
   const scores: Score[] = [
@@ -396,7 +396,7 @@ function buildSuggestedChanges(scores: Score[], skillMd: string): string[] {
           );
         } else {
           changes.push(
-            "Expand `## Gotchas` with more specific, project-relevant items — not generic advice",
+            "Expand `## Gotchas` with more specific, project-relevant items - not generic advice",
           );
         }
         break;
@@ -434,13 +434,13 @@ function buildSuggestedChanges(scores: Score[], skillMd: string): string[] {
 
       case "Context economy":
         changes.push(
-          "Trim generic or fundamental explanations — assume the agent already knows common concepts",
+          "Trim generic or fundamental explanations - assume the agent already knows common concepts",
         );
         break;
 
       case "Procedural clarity":
         changes.push(
-          "Add numbered steps with decision criteria to the `## Process` section — teach *how*, not just *what*",
+          "Add numbered steps with decision criteria to the `## Process` section - teach *how*, not just *what*",
         );
         break;
 
@@ -495,11 +495,11 @@ export function formatAuditReport(audits: SkillAudit[]): string {
         "",
         a.strengths.length > 0
           ? `**Strengths:**\n${a.strengths.map((s) => `- ${s}`).join("\n")}`
-          : "**Strengths:** None identified — all axes have room to grow",
+          : "**Strengths:** None identified - all axes have room to grow",
         "",
         a.improvements.length > 0
           ? `**Improvement opportunities:**\n${a.improvements.map((i) => `- ${i}`).join("\n")}`
-          : "**Improvement opportunities:** None — all axes scored 3",
+          : "**Improvement opportunities:** None - all axes scored 3",
         "",
         a.suggestedChanges.length > 0
           ? `**Suggested changes:**\n${a.suggestedChanges.map((c, i) => `${i + 1}. ${c}`).join("\n")}`
@@ -532,9 +532,9 @@ export function formatAuditReport(audits: SkillAudit[]): string {
     rows,
     "",
     "**Score interpretation:**",
-    "- 2.5–3.0: Strong — follows best practices well",
-    "- 1.5–2.4: Adequate — works but has improvement opportunities",
-    "- 1.0–1.4: Needs work — significant gaps against best practices",
+    "- 2.5–3.0: Strong - follows best practices well",
+    "- 1.5–2.4: Adequate - works but has improvement opportunities",
+    "- 1.0–1.4: Needs work - significant gaps against best practices",
     "",
     "---",
     "",

@@ -22,7 +22,7 @@ function getEnv(): AdoEnv | null {
   const repoId = process.env.BUILD_REPOSITORY_ID || process.env.BUILD_REPOSITORY_NAME || "";
   const prId = process.env.SYSTEM_PULLREQUEST_PULLREQUESTID || process.env.PR_ID || "";
 
-  // System.AccessToken is the preferred auth method in ADO pipelines — OAuth bearer token
+  // System.AccessToken is the preferred auth method in ADO pipelines - OAuth bearer token
   const accessToken = process.env.SYSTEM_ACCESSTOKEN || "";
   if (accessToken && orgUrl && project && repoId && prId) {
     return { token: accessToken, tokenType: "bearer", orgUrl, project, repoId, prId };

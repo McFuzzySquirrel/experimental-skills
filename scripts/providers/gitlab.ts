@@ -24,17 +24,17 @@ export const gitlabProvider: Provider = {
     const env = getEnv();
 
     if (!env.GITLAB_TOKEN) {
-      errors.push("GITLAB_TOKEN not set — cannot post MR comments");
+      errors.push("GITLAB_TOKEN not set - cannot post MR comments");
       return { posted: 0, errors };
     }
 
     if (!env.CI_PROJECT_ID) {
-      errors.push("CI_PROJECT_ID not set — cannot determine GitLab project");
+      errors.push("CI_PROJECT_ID not set - cannot determine GitLab project");
       return { posted: 0, errors };
     }
 
     if (!env.CI_MERGE_REQUEST_IID) {
-      errors.push("CI_MERGE_REQUEST_IID not set — cannot determine merge request");
+      errors.push("CI_MERGE_REQUEST_IID not set - cannot determine merge request");
       return { posted: 0, errors };
     }
 
