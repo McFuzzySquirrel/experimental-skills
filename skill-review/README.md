@@ -2,6 +2,30 @@
 
 Audit your project's skills against [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices) and get inline PR guidance.
 
+## File layout
+
+| File/dir | Purpose | Where it goes in your project |
+|----------|---------|-------------------------------|
+| `scripts/` | TypeScript audit tool | Copy or submodule the whole `skill-review/` directory |
+| `ci-examples/github-actions.yml` | GitHub Actions workflow | `.github/workflows/skill-review.yml` |
+| `ci-examples/azure-pipelines.yml` | Azure DevOps pipeline | `azure-pipelines.yml` (repo root) |
+| `templates/skills/skill-review/SKILL.md` | AI-agent skill instruction | `.agents/skills/skill-review/SKILL.md` (or wherever your project keeps skills) |
+
+## Getting started
+
+```bash
+# 1. Add to your repo — copy the directory or use a submodule
+cp -r path/to/skill-review .
+
+# 2. Install dependencies
+cd skill-review && npm install
+
+# 3. Run against changed skill files in a PR
+npx tsx scripts/skill-review.ts --provider github --min-score 1.5
+```
+
+> **Tip:** For CI, add the example workflow file to your repo (see CI examples below). The scripts dir and `package.json` must be present at the working directory root.
+
 ## Usage
 
 ```bash
