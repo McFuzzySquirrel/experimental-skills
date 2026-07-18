@@ -94,9 +94,5 @@ Output only the three items above, clearly labelled. Do not repeat the minutes.
 
 ## Example output (reference)
 
-A good example of what this skill produces is a **team introduction document**: a record of
-an agent–human discussion about a project that was then structured into a document capturing
-the conversation, key decisions, and project context — exactly what meeting minutes are for.
-
-The skill automates and standardises this process so any team can produce the same artefact
-after any significant conversation, regardless of project type or tech stack.
+Load `references/example-output.md` when the user asks for a sample output, output quality bar,
+or formatting example before generating minutes.
