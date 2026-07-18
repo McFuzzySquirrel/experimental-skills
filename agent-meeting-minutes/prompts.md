@@ -27,6 +27,9 @@ is to read the full conversation carefully and extract the following four things
 4. KEY THEMES — the two or three main topics the conversation covered. These will
    form the backbone of the Summary section.
 
+Be conservative: do not invent decisions or action items. Only include items that are
+clearly supported by the conversation. If ownership is not named, use TBD.
+
 Do not produce the minutes yet. List your extractions in plain bullet form so they can
 be reviewed before formatting. Label each section clearly.
 ```
@@ -50,6 +53,9 @@ format specified in your SKILL.md instructions. Requirements:
 - Write the Summary as a coherent narrative, 200–400 words. Do not copy the bullet
   extractions verbatim; synthesise them into flowing prose.
 - Render Decisions, Action Items, and Open Questions as the specified Markdown tables.
+- Before finalizing, self-check against the validation checklist in SKILL.md: each
+  decision has rationale, each action item has an owner or TBD, each open question is
+  truly unresolved, and the output is not a transcript.
 - If a section is empty (e.g. no open questions), include the heading and write
   "None identified." rather than omitting the section.
 - End with the italicised footer line exactly as specified in SKILL.md.
