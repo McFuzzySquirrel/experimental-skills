@@ -28,6 +28,10 @@ conversations that should become a durable record.
 Do not use this skill for general chat summarization or raw transcript cleanup unless the
 user explicitly wants meeting minutes.
 
+## Participant identification
+
+When identifying participants, prefer the signed-in user's alias or display name if it is available from the conversation context. If the user has not provided a name, use a neutral label such as "You" or "Human" rather than inventing one. If the conversation explicitly names the other participant, use that name; otherwise, use "Agent" for the assistant.
+
 ## What counts as a decision
 
 A decision is any point in the conversation where a commitment was made or an option was
@@ -83,7 +87,7 @@ Produce the minutes as a Markdown document using this exact structure:
 # Meeting Minutes — <topic> (<date>)
 
 **Date:** <ISO date>
-**Participants:** <list every named participant; use "Human" and "Agent" if unnamed>
+**Participants:** <list every named participant; prefer the signed-in user's alias or display name when available; otherwise use "You" or "Human" and "Agent">
 **Project:** <project or product name if mentioned; otherwise "—">
 
 ---

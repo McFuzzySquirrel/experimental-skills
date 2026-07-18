@@ -46,8 +46,9 @@ Using the extractions above, produce the final meeting minutes in the exact Mark
 format specified in your SKILL.md instructions. Requirements:
 
 - Fill in the header block: date (today's date in ISO 8601 format, YYYY-MM-DD),
-  participants (use names if given; otherwise "Human" and "Agent"), and project
-  (infer from context, or use "—" if not mentioned).
+  participants (prefer the signed-in user's alias or display name when available;
+  otherwise use "You" or "Human" and "Agent"), and project (infer from context,
+  or use "—" if not mentioned).
 - Write the TL;DR first — one paragraph, 3–5 sentences, for someone who wasn't
   in the meeting.
 - Write the Summary as a coherent narrative, 200–400 words. Do not copy the bullet
