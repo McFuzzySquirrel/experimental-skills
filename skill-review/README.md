@@ -9,9 +9,13 @@ Audit your project's skills against [agentskills.io best practices](https://agen
 | `scripts/` | TypeScript audit tool | Copy or submodule the whole `skill-review/` directory |
 | `ci-examples/github-actions.yml` | GitHub Actions workflow | `.github/workflows/skill-review.yml` |
 | `ci-examples/azure-pipelines.yml` | Azure DevOps pipeline | `azure-pipelines.yml` (repo root) |
-| `templates/skills/skill-review/SKILL.md` | AI-agent skill instruction | `.agents/skills/skill-review/SKILL.md` (or wherever your project keeps skills) |
+| `templates/skills/skill-review/` | Self-contained skill package (instruction + scripts + package.json) | Copy the whole directory to `.agents/skills/skill-review/` |
 
 ## Getting started
+
+Requires Node.js 18+ (Node.js 20+ recommended).
+
+### Option A: Full repo tooling (best for CI)
 
 ```bash
 # 1. Add to your repo — copy the directory or use a submodule
@@ -25,6 +29,19 @@ npx tsx scripts/skill-review.ts --provider github --min-score 1.5
 ```
 
 > **Tip:** For CI, add the example workflow file to your repo (see CI examples below). The scripts dir and `package.json` must be present at the working directory root.
+
+### Option B: Standalone skill folder (portable)
+
+```bash
+# 1. Copy only the template skill package into your skills directory
+cp -r skill-review/templates/skills/skill-review .agents/skills/
+
+# 2. Install deps inside the copied skill folder
+cd .agents/skills/skill-review && npm install
+
+# 3. Run the embedded tool against your repo (auto-detects git root)
+npm run skill-review -- --provider stdout --min-score 1.5
+```
 
 ## Usage
 
@@ -76,4 +93,4 @@ Each skill is scored 1–3 on six axes:
 
 ## Template skill
 
-`templates/skills/skill-review/SKILL.md` is the AI-agent instruction template for this skill. Drop it into your project's skill directory to let your agent audit other skills autonomously.
+`templates/skills/skill-review/` is a portable, self-contained skill package. Drop the whole directory into your project's skill directory to let your agent audit other skills autonomously and optionally run the embedded scripts directly from that folder.
