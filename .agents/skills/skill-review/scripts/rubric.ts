@@ -211,17 +211,12 @@ function checkStructural(
   }
 
   // Check relative path references
-  const refs = skillMd.match(/\(\.\.?\/[^)]+\)/g) || [];
-  for (const ref of refs) {
-    if (!ref.startsWith("(../") && !ref.startsWith("(./")) {
-      // paths starting with ../ or ./ are okay, everything else likely not relative
-    }
-    // Check that .md refs are relative
-    const mdRefs = skillMd.match(/\([^)]*\.md\)/g) || [];
-    for (const mr of mdRefs) {
-      if (!mr.startsWith("(./") && !mr.startsWith("(../")) {
-        issues.push(`File reference "${mr}" should use a relative path from the skill root`);
-      }
+  const mdRefs = Array.from(
+    new Set(skillMd.match(/\([^)]*\.md\)/g) || []),
+  );
+  for (const mr of mdRefs) {
+    if (!mr.startsWith("(./") && !mr.startsWith("(../")) {
+      issues.push(`File reference "${mr}" should use a relative path from the skill root`);
     }
   }
 
