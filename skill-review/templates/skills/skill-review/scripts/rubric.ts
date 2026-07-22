@@ -1,3 +1,5 @@
+import { basename, dirname } from "node:path";
+
 export interface Score {
   axis: string;
   score: number; // 1-3
@@ -253,7 +255,7 @@ import matter from "gray-matter";
 
 export function auditSkill(input: AuditInput): SkillAudit {
   const { skillMd, skillName, skillPath, hasRefsDir, hasAssetsDir, hasScriptsDir } = input;
-  const parentDir = skillPath.replace(/\/SKILL\.md$/i, "").split("/").pop() || skillName;
+  const parentDir = basename(dirname(skillPath));
 
   // Parse frontmatter for structural checks
   let rawFm: Record<string, unknown> = {};
