@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { auditSkill, formatAuditReport, scoreTier, type SkillAudit } from "./rubric.js";
 import {
   detectSkillDir,
@@ -44,6 +44,7 @@ interface CliOptions {
   minScore: string;
   failBelow: boolean;
   root: string;
+  skillsDir: string;
 }
 
 const program = new Command();
@@ -75,6 +76,10 @@ program
     "Project root directory",
     detectDefaultRoot(),
   )
+  .option(
+    "-d, --skills-dir <path>",
+    "Root folder to scan for skills (overrides auto-detection of standard skill directories)",
+  )
   .parse(process.argv);
 
 const opts = program.opts<CliOptions>();
@@ -82,14 +87,15 @@ const opts = program.opts<CliOptions>();
 async function main() {
   const root = resolve(opts.root);
   const provider = PROVIDERS[opts.provider];
-  const minScore = parseFloat(opts.minScore);
+  const minScoreText = opts.minScore.trim();
+  const minScore = Number(minScoreText);
 
   if (!provider) {
     console.error(`Unknown provider: ${opts.provider}. Valid: ${Object.keys(PROVIDERS).join(", ")}`);
     process.exit(1);
   }
 
-  if (isNaN(minScore) || minScore < 1 || minScore > 3) {
+  if (!/^\d+(?:\.\d+)?$/.test(minScoreText) || !Number.isFinite(minScore) || minScore < 1 || minScore > 3) {
     console.error(`Invalid min-score: ${opts.minScore}. Must be between 1.0 and 3.0`);
     process.exit(1);
   }
@@ -103,6 +109,15 @@ async function main() {
       console.error(`Missing files: ${missing.join(", ")}`);
     }
     files = valid;
+  } else if (opts.skillsDir) {
+    const skillsDir = resolve(opts.skillsDir);
+    if (!existsSync(skillsDir)) {
+      console.error(`Skills directory not found: ${skillsDir}`);
+      process.exit(1);
+    }
+    console.error(`Scanning for skills in: ${skillsDir}`);
+    const all = findSkillFiles(skillsDir);
+    files = excludeSelf(all);
   } else {
     // Auto-detect: first try changed files from git diff, then fall back to all skills
     const changed = getChangedSkillFiles(root);
@@ -132,16 +147,16 @@ async function main() {
   for (const file of files) {
     try {
       const content = readFileSync(file, "utf-8");
-      const dirParts = file.replace(/\/SKILL\.md$/i, "").split("/");
-      const skillName = dirParts[dirParts.length - 1] || file;
+      const skillDir = dirname(file);
+      const skillName = skillDir.split("/").pop() || file;
 
       const audit = auditSkill({
         skillMd: content,
         skillName,
         skillPath: file,
-        hasRefsDir: false, // Could check with fs.existsSync
-        hasAssetsDir: false,
-        hasScriptsDir: false,
+        hasRefsDir: existsSync(join(skillDir, "references")),
+        hasAssetsDir: existsSync(join(skillDir, "assets")),
+        hasScriptsDir: existsSync(join(skillDir, "scripts")),
       });
 
       audits.push(audit);

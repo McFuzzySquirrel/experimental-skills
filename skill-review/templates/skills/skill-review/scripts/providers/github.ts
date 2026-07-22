@@ -1,4 +1,6 @@
 import type { Provider } from "./provider.js";
+import { execSync } from "node:child_process";
+import { relative, resolve } from "node:path";
 
 export interface GitHubEnv {
   GITHUB_TOKEN: string;
@@ -35,6 +37,19 @@ function extractRepo(): { owner: string; repo: string } | null {
     if (parts.length === 2) return { owner: parts[0], repo: parts[1] };
   }
   return null;
+}
+
+function detectRepoRoot(): string {
+  try {
+    const repoRoot = execSync("git rev-parse --show-toplevel", {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    if (repoRoot) return repoRoot;
+  } catch {
+    // Fall back to current working directory outside git contexts.
+  }
+  return process.cwd();
 }
 
 export const githubProvider: Provider = {
@@ -94,15 +109,21 @@ export const githubProvider: Provider = {
       // Post per-file inline comments as review comments if possible
       // Only works if we're on a PR and have the commit SHA and file paths relative to repo root
       const headSha = process.env.GITHUB_SHA || process.env.BUILD_SOURCEVERSION || "";
+      const repoRoot = detectRepoRoot();
 
       for (const file of files) {
-        // Try to make path relative to repo root
-        const relativePath = file.replace(process.cwd() + "/", "");
+        const relativePath = relative(repoRoot, resolve(file)).replace(/\\/g, "/");
+        if (relativePath.startsWith("../")) {
+          errors.push(`Skipping inline comment for file outside repository root: ${file}`);
+          continue;
+        }
 
         // Get the git diff to find the position in the file
         try {
-          const { execSync } = await import("node:child_process");
-          const diff = execSync(`git diff HEAD~1 -- "${relativePath}"`, { encoding: "utf-8" }).trim();
+          const diff = execSync(`git diff HEAD~1 -- "${relativePath}"`, {
+            encoding: "utf-8",
+            cwd: repoRoot,
+          }).trim();
 
           if (diff) {
             // Find the first changed line to anchor the comment

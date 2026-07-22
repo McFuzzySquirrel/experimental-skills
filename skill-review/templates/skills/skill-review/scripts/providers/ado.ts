@@ -1,4 +1,6 @@
 import type { Provider } from "./provider.js";
+import { execSync } from "node:child_process";
+import { relative, resolve } from "node:path";
 
 interface AdoEnv {
   token: string;
@@ -37,6 +39,19 @@ function getEnv(): AdoEnv | null {
   return null;
 }
 
+function detectRepoRoot(): string {
+  try {
+    const repoRoot = execSync("git rev-parse --show-toplevel", {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    if (repoRoot) return repoRoot;
+  } catch {
+    // Fall back to current working directory outside git contexts.
+  }
+  return process.cwd();
+}
+
 export const adoProvider: Provider = {
   name: "ado",
 
@@ -59,6 +74,7 @@ export const adoProvider: Provider = {
     }
 
     const auth = getAuth(env.token, env.tokenType);
+    const repoRoot = detectRepoRoot();
 
     try {
       let postedCount = 0;
@@ -94,7 +110,11 @@ export const adoProvider: Provider = {
       }
 
       for (const file of files) {
-        const relativePath = file.replace(process.cwd() + "/", "");
+        const relativePath = relative(repoRoot, resolve(file)).replace(/\\/g, "/");
+        if (relativePath.startsWith("../")) {
+          errors.push(`Skipping ADO inline thread for file outside repository root: ${file}`);
+          continue;
+        }
 
         const fileBody = `### Skill Review: \`${relativePath}\`\n\nChecked against [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices). See summary thread for full report.`;
 
@@ -126,7 +146,12 @@ export const adoProvider: Provider = {
           },
         );
 
-        if (fileResp.ok) postedCount++;
+        if (fileResp.ok) {
+          postedCount++;
+        } else {
+          const errBody = await fileResp.text();
+          errors.push(`ADO file thread error for ${relativePath}: ${fileResp.status} ${errBody.slice(0, 300)}`);
+        }
       }
 
       return { posted: postedCount, errors };
