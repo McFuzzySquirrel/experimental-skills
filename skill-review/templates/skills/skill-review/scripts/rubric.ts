@@ -129,17 +129,18 @@ function scoreProceduralClarity(skillMd: string): number {
 /**
  * Score progressive disclosure (1-3).
  * Checks for references/assets usage and reasonable SKILL.md length.
+ * Also considers on-disk presence of references/ and assets/ directories.
  */
-function scoreProgressiveDisclosure(skillMd: string): number {
+function scoreProgressiveDisclosure(skillMd: string, hasRefsDirOnDisk: boolean, hasAssetsDirOnDisk: boolean): number {
   const lines = countLines(skillMd);
   const hasRefs = hasReferences(skillMd);
   const hasLoad = hasLoadTrigger(skillMd);
-  const hasRefsDir = /\breferences\//i.test(skillMd);
-  const hasAssetsDir = /\bassets\//i.test(skillMd);
+  const hasRefsDir = hasRefsDirOnDisk || /\breferences\//i.test(skillMd);
+  const hasAssetsDir = hasAssetsDirOnDisk || /\bassets\//i.test(skillMd);
 
   if (hasRefs && hasLoad && (hasRefsDir || hasAssetsDir) && lines < 500)
     return 3;
-  if ((hasRefs || hasAssetsDir) && lines < 600) return 2;
+  if ((hasRefs || hasRefsDir || hasAssetsDir) && lines < 600) return 2;
   return 1;
 }
 
@@ -169,11 +170,12 @@ function scoreCalibration(skillMd: string): number {
 /**
  * Score validation (1-3).
  * Checks for validation section, checkboxes, scripts.
+ * Also considers on-disk presence of a scripts/ directory.
  */
-function scoreValidation(skillMd: string): number {
+function scoreValidation(skillMd: string, hasScriptsDirOnDisk: boolean): number {
   const hasValidation = hasSection(skillMd, "Validation");
   const checkboxes = countCheckboxes(skillMd);
-  const hasScriptCheck = /scripts?\//i.test(skillMd);
+  const hasScriptCheck = hasScriptsDirOnDisk || /scripts?\//i.test(skillMd);
   const hasSelfCheck = /self.?(check|validate|verify)/i.test(skillMd);
 
   if (hasValidation && checkboxes >= 3 && (hasScriptCheck || hasSelfCheck))
@@ -250,7 +252,7 @@ export interface AuditInput {
 import matter from "gray-matter";
 
 export function auditSkill(input: AuditInput): SkillAudit {
-  const { skillMd, skillName, skillPath } = input;
+  const { skillMd, skillName, skillPath, hasRefsDir, hasAssetsDir, hasScriptsDir } = input;
   const parentDir = skillPath.replace(/\/SKILL\.md$/i, "").split("/").pop() || skillName;
 
   // Parse frontmatter for structural checks
@@ -279,10 +281,10 @@ export function auditSkill(input: AuditInput): SkillAudit {
     },
     {
       axis: "Progressive disclosure",
-      score: scoreProgressiveDisclosure(skillMd),
+      score: scoreProgressiveDisclosure(skillMd, hasRefsDir, hasAssetsDir),
       reasoning: buildReasoning(
         "progressive disclosure",
-        scoreProgressiveDisclosure(skillMd),
+        scoreProgressiveDisclosure(skillMd, hasRefsDir, hasAssetsDir),
       ),
     },
     {
@@ -292,8 +294,8 @@ export function auditSkill(input: AuditInput): SkillAudit {
     },
     {
       axis: "Validation",
-      score: scoreValidation(skillMd),
-      reasoning: buildReasoning("validation", scoreValidation(skillMd)),
+      score: scoreValidation(skillMd, hasScriptsDir),
+      reasoning: buildReasoning("validation", scoreValidation(skillMd, hasScriptsDir)),
     },
   ];
 
@@ -305,7 +307,7 @@ export function auditSkill(input: AuditInput): SkillAudit {
 
   const strengths = buildStrengths(scores);
   const improvements = buildImprovements(scores);
-  const suggestedChanges = buildSuggestedChanges(scores, skillMd);
+  const suggestedChanges = buildSuggestedChanges(scores, skillMd, hasRefsDir, hasAssetsDir, hasScriptsDir);
 
   return {
     name: skillName,
@@ -377,7 +379,7 @@ function buildImprovements(scores: Score[]): string[] {
     });
 }
 
-function buildSuggestedChanges(scores: Score[], skillMd: string): string[] {
+function buildSuggestedChanges(scores: Score[], skillMd: string, hasRefsDirOnDisk: boolean, hasAssetsDirOnDisk: boolean, hasScriptsDirOnDisk: boolean): string[] {
   const changes: string[] = [];
 
   for (const s of scores) {
@@ -398,15 +400,22 @@ function buildSuggestedChanges(scores: Score[], skillMd: string): string[] {
 
       case "Progressive disclosure":
         if (s.score === 1) {
-          const longSections = findLongSections(skillMd);
-          if (longSections.length > 0) {
+          if (hasRefsDirOnDisk || hasAssetsDirOnDisk) {
+            const dirName = hasRefsDirOnDisk ? "references" : "assets";
             changes.push(
-              `Move verbose sections to \`references/\`: ${longSections.join(", ")}`,
+              `Link your existing \`${dirName}/\` files in \`SKILL.md\` and add load triggers (e.g., \`load \`references/example.md\`\`)`,
             );
           } else {
-            changes.push(
-              "Create a `references/` directory and move reference material out of `SKILL.md` with load triggers",
-            );
+            const longSections = findLongSections(skillMd);
+            if (longSections.length > 0) {
+              changes.push(
+                `Move verbose sections to \`references/\`: ${longSections.join(", ")}`,
+              );
+            } else {
+              changes.push(
+                "Create a `references/` directory and move reference material out of `SKILL.md` with load triggers",
+              );
+            }
           }
         } else {
           changes.push(
