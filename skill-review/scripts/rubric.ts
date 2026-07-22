@@ -403,7 +403,7 @@ function buildSuggestedChanges(scores: Score[], skillMd: string, hasRefsDirOnDis
           if (hasRefsDirOnDisk || hasAssetsDirOnDisk) {
             const dirName = hasRefsDirOnDisk ? "references" : "assets";
             changes.push(
-              `Link your existing \`${dirName}/\` files in \`SKILL.md\` and add load triggers (e.g., \`load \`references/example.md\`\`)`,
+              `Link your existing \`${dirName}/\` files in \`SKILL.md\` and add load triggers (e.g., load \`references/example.md\`)`,
             );
           } else {
             const longSections = findLongSections(skillMd);
