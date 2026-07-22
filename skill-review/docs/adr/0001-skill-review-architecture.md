@@ -27,7 +27,14 @@ Score skill files using deterministic text heuristics (regex patterns, line coun
 
 ### Trade-offs
 
-Static heuristics cannot understand semantics. A skill file could satisfy every regex pattern yet still contain bad advice. The rubric is a floor check, not a comprehensive review. An LLM-assisted review layer can be layered on top in the future without replacing this tool.
+Static heuristics cannot understand semantics. A skill file could satisfy every regex pattern yet still contain bad advice. The rubric is a floor check, not a comprehensive review. An LLM-assisted review layer can be layered on top without replacing this tool.
+
+**Note:** That agent/LLM layer already exists. `SKILL.md` (the portable agent skill shipped with this package) is exactly that layer — it instructs an AI agent to read each skill file, apply semantic judgment using the same six-axis rubric, and produce a richer, context-aware audit. The two layers are complementary:
+
+| Layer | Where | Driven by | When it runs |
+|-------|-------|-----------|--------------|
+| Static heuristic tool (`rubric.ts`) | CI / CLI | Regex + line counts | Every PR, zero cost |
+| Agent skill (`SKILL.md`) | Agent session | LLM reasoning | On demand, human-in-the-loop |
 
 ---
 
@@ -117,3 +124,41 @@ A skill author may have already created a `references/` directory with files but
 | Single monolithic script | Was the initial implementation; split into `rubric.ts` / `detect.ts` / `skill-review.ts` to improve testability |
 | Gitsubmodule delivery | Harder to adopt than a simple directory copy; creates version-pin friction |
 | Score 1–5 instead of 1–3 | More granularity doesn't improve actionability; 1/2/3 maps cleanly to needs-work/adequate/strong |
+
+---
+
+## System Architecture: Two-Layer Review
+
+The tool ships with two complementary review layers. The diagram below shows how they relate.
+
+```mermaid
+flowchart TD
+    A([skill file<br/>SKILL.md]) --> B
+
+    subgraph Layer1["Layer 1 — Static Heuristic Tool (CI / CLI)"]
+        B["rubric.ts\n(regex · line counts · section detection)"]
+        B --> C["detect.ts\n(on-disk folder presence)"]
+        C --> D["skill-review.ts\n(orchestrate + score)"]
+        D --> E{provider}
+        E -->|GitHub| F[PR comment]
+        E -->|GitLab / ADO| G[Platform comment]
+        E -->|stdout| H[Terminal output]
+    end
+
+    subgraph Layer2["Layer 2 — Agent Skill (on-demand, LLM-driven)"]
+        I["SKILL.md\n(agent instructions)"]
+        I --> J["AI agent reads each\nskill file + references"]
+        J --> K["Applies same six-axis rubric\nwith semantic judgment"]
+        K --> L["Audit report +\nsuggested improvements"]
+        L --> M{user approval?}
+        M -->|yes| N[Apply changes]
+        M -->|no| O[Stop — report only]
+    end
+
+    A --> I
+
+    style Layer1 fill:#f0f4ff,stroke:#4a6fa5
+    style Layer2 fill:#f0fff4,stroke:#3a7d44
+```
+
+**Key principle:** Layer 1 is a *floor check* — fast, free, reproducible. Layer 2 is a *ceiling check* — semantic, contextual, human-in-the-loop. Neither replaces the other.
