@@ -44,6 +44,7 @@ interface CliOptions {
   minScore: string;
   failBelow: boolean;
   root: string;
+  skillsDir: string;
 }
 
 const program = new Command();
@@ -75,6 +76,10 @@ program
     "Project root directory",
     detectDefaultRoot(),
   )
+  .option(
+    "-d, --skills-dir <path>",
+    "Root folder to scan for skills (overrides auto-detection of standard skill directories)",
+  )
   .parse(process.argv);
 
 const opts = program.opts<CliOptions>();
@@ -104,6 +109,15 @@ async function main() {
       console.error(`Missing files: ${missing.join(", ")}`);
     }
     files = valid;
+  } else if (opts.skillsDir) {
+    const skillsDir = resolve(opts.skillsDir);
+    if (!existsSync(skillsDir)) {
+      console.error(`Skills directory not found: ${skillsDir}`);
+      process.exit(1);
+    }
+    console.error(`Scanning for skills in: ${skillsDir}`);
+    const all = findSkillFiles(skillsDir);
+    files = excludeSelf(all);
   } else {
     // Auto-detect: first try changed files from git diff, then fall back to all skills
     const changed = getChangedSkillFiles(root);
