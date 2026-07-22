@@ -253,7 +253,7 @@ import matter from "gray-matter";
 
 export function auditSkill(input: AuditInput): SkillAudit {
   const { skillMd, skillName, skillPath } = input;
-  const parentDir = basename(dirname(skillPath));
+  const parentDir = basename(dirname(skillPath)) || skillName;
 
   // Parse frontmatter for structural checks
   let rawFm: Record<string, unknown> = {};
