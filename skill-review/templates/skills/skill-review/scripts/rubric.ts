@@ -11,6 +11,7 @@ export interface SkillAudit {
   path: string;
   scores: Score[];
   overall: number;
+  reviewerStyleProxy: number | null;
   strengths: string[];
   improvements: string[];
   suggestedChanges: string[];
@@ -58,11 +59,19 @@ function hasLoadTrigger(text: string): boolean {
   return /load when/i.test(text) || /load.*reference/i.test(text);
 }
 
+function countFencedCommandBlocks(text: string): number {
+  return (text.match(/```(?:bash|sh|shell|zsh|console|powershell|cmd)?[\s\S]*?```/gi) || []).length;
+}
+
+function hasFallbackGuidance(text: string): boolean {
+  return /(if (that|this) doesn'?t work|if that fails|if it fails|fallback|otherwise|alternatively|try .* instead)/i.test(text);
+}
+
 /**
  * Score context economy (1-3).
  * Dings for generic/fundamental explanations, praises specificity.
  */
-function scoreContextEconomy(skillMd: string): number {
+function scoreContextEconomy(skillMd: string, hasRefsDirOnDisk: boolean, hasAssetsDirOnDisk: boolean): number {
   const genericPatterns = [
     /what is an? /i,
     /is a (widely|well|commonly) known/i,
@@ -80,7 +89,9 @@ function scoreContextEconomy(skillMd: string): number {
   }
 
   const lines = countLines(skillMd);
+  const hasOffloadedDetail = (hasReferences(skillMd) || hasRefsDirOnDisk || hasAssetsDirOnDisk) && hasLoadTrigger(skillMd);
 
+  if (genericHits <= 1 && hasOffloadedDetail) return 3;
   if (genericHits === 0 && lines < 200) return 3;
   if (genericHits <= 1 && lines < 350) return 2;
   return 1;
@@ -151,21 +162,51 @@ function scoreProgressiveDisclosure(skillMd: string, hasRefsDirOnDisk: boolean, 
  * Matches prescriptiveness to task fragility.
  */
 function scoreCalibration(skillMd: string): number {
-  const exactCommands = (skillMd.match(/`[^`]{3,}`/g) || []).length;
+  const inlineCommands = (skillMd.match(/`[^`]{3,}`/g) || []).length;
+  const fencedCommands = countFencedCommandBlocks(skillMd);
   const escapeHatches = (skillMd.match(
     /if (that|this) doesn'?t work/i,
   ) || []).length;
+  const defaults = (skillMd.match(/(?:by default|default command|use the standard|run the standard|recommended command)/gi) || []).length;
   const mayAlternatives = (skillMd.match(
     /you (can|may|might|could) (also |alternatively )?/gi,
   ) || []).length;
   const destructiveOps = (skillMd.match(
     /(delete|destroy|drop|rm\s|remove|truncate|purge)/gi,
   ) || []).length;
+  const commandExamples = inlineCommands + fencedCommands;
+  const hasFallbacks = hasFallbackGuidance(skillMd) || escapeHatches > 0 || defaults > 0;
 
-  // Destructive ops should have exact commands; flexible ops should have escape hatches
-  if (destructiveOps > 0 && exactCommands === 0) return 1;
-  if (exactCommands > 3 && escapeHatches + mayAlternatives >= 2) return 3;
-  if (exactCommands >= 2 || mayAlternatives >= 1) return 2;
+  if (destructiveOps > 0 && commandExamples === 0) return 1;
+  if (commandExamples >= 1 && hasFallbacks) return 3;
+  if (commandExamples >= 2 || mayAlternatives >= 1) return 2;
+  return 1;
+}
+
+function scoreReviewerStyleProxy(
+  skillMd: string,
+  hasRefsDirOnDisk: boolean,
+  hasAssetsDirOnDisk: boolean,
+  hasScriptsDirOnDisk: boolean,
+): number {
+  const gotchaCount = (sectionContent(skillMd, "Gotchas").match(/^\s*[-*]/gm) || []).length;
+  const hasProcess = hasSection(skillMd, "Process");
+  const stepCount = (skillMd.match(/^###?\s+Step\s+\d+:/gm) || []).length;
+  const hasOffloadedDetail = (hasReferences(skillMd) || hasRefsDirOnDisk || hasAssetsDirOnDisk) && hasLoadTrigger(skillMd);
+  const fencedCommands = countFencedCommandBlocks(skillMd);
+  const hasFallback = hasFallbackGuidance(skillMd);
+  const validationChecks = countCheckboxes(skillMd);
+  const hasScriptSupport = hasScriptsDirOnDisk || /scripts?\//i.test(skillMd);
+
+  let points = 0;
+  if (gotchaCount >= 3) points += 1;
+  if (hasProcess && stepCount >= 2) points += 1;
+  if (hasOffloadedDetail) points += 1;
+  if (fencedCommands >= 1 && hasFallback) points += 1;
+  if (validationChecks >= 2 && hasScriptSupport) points += 1;
+
+  if (points >= 4) return 3;
+  if (points >= 2) return 2;
   return 1;
 }
 
@@ -268,8 +309,8 @@ export function auditSkill(input: AuditInput): SkillAudit {
   const scores: Score[] = [
     {
       axis: "Context economy",
-      score: scoreContextEconomy(skillMd),
-      reasoning: buildReasoning("context economy", scoreContextEconomy(skillMd)),
+      score: scoreContextEconomy(skillMd, hasRefsDir, hasAssetsDir),
+      reasoning: buildReasoning("context economy", scoreContextEconomy(skillMd, hasRefsDir, hasAssetsDir)),
     },
     {
       axis: "Gotchas coverage",
@@ -306,6 +347,7 @@ export function auditSkill(input: AuditInput): SkillAudit {
     Math.round(
       (scores.reduce((sum, s) => sum + s.score, 0) / scores.length) * 10,
     ) / 10;
+  const reviewerStyleProxy = scoreReviewerStyleProxy(skillMd, hasRefsDir, hasAssetsDir, hasScriptsDir);
 
   const strengths = buildStrengths(scores);
   const improvements = buildImprovements(scores);
@@ -316,6 +358,7 @@ export function auditSkill(input: AuditInput): SkillAudit {
     path: skillPath,
     scores,
     overall,
+    reviewerStyleProxy,
     strengths,
     improvements,
     suggestedChanges,
@@ -498,6 +541,7 @@ export function formatAuditReport(audits: SkillAudit[]): string {
         "",
         `**Overall score:** ${a.overall} ${tierEmoji} (${tier})`,
         `**Path:** \`${a.path}\``,
+        `**Reviewer-style proxy:** ${a.reviewerStyleProxy} (proxy)`,
         "",
         a.strengths.length > 0
           ? `**Strengths:**\n${a.strengths.map((s) => `- ${s}`).join("\n")}`
