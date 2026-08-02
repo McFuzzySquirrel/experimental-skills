@@ -4,6 +4,7 @@ Audit your project's skills against [agentskills.io best practices](https://agen
 
 - Scores each skill 1–3 on six quality axes and posts the report as a PR comment
 - Also includes a deterministic reviewer-style proxy score so semantic guidance can be tracked even when no human reviewer is available
+- When applying changes, the agent first presents a short review plan before editing anything
 - Supports GitHub, GitLab, Azure DevOps, and stdout output
 - Works as a standalone skill package your AI agent can run autonomously
 - Zero runtime cost — fully static heuristics, no LLM API needed
@@ -220,3 +221,5 @@ Run `npm install` inside the `skill-review/` directory (or the standalone skill 
 ## Architecture
 
 See [`docs/adr/0001-skill-review-architecture.md`](docs/adr/0001-skill-review-architecture.md) for the full Architecture Decision Record covering: static heuristics vs LLM scoring, the six-axis rubric, the reviewer-style proxy score, the modular provider pattern, TypeScript + tsx runtime, the portable skill package, and on-disk folder detection.
+
+For the workflow refinement around the reviewer-style proxy and the review-plan-before-edits step, see [`docs/adr/0002-hybrid-review-proxy-and-review-plan.md`](docs/adr/0002-hybrid-review-proxy-and-review-plan.md).
