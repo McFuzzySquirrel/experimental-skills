@@ -11,6 +11,8 @@ description: >
 
 You are auditing skills against the [agentskills.io best practices](https://agentskills.io/skill-creation/best-practices). Your job is to read each skill, score it against a structured rubric, produce a reviewable audit report, and - only when the user explicitly approves - apply targeted improvements.
 
+The audit report includes a deterministic reviewer-style proxy score when no explicit human review is available. Treat that score as a proxy, not a literal human judgment.
+
 ## Embedded Tooling (Portable Install)
 
 This skill package is self-contained. If this directory is installed as `.agents/skills/skill-review/`, the helper scripts are available at:
@@ -58,6 +60,8 @@ Also check:
 - [ ] YAML frontmatter is valid
 - [ ] File references use relative paths from skill root
 - [ ] No more than one level of reference chain depth
+
+Before applying any edits, write a short review plan that lists the top issues, the proposed changes, and the reason for each change. Present that plan to the user first.
 
 ### Step 3: Produce Audit Report
 

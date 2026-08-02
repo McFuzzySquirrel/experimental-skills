@@ -116,6 +116,22 @@ A skill author may have already created a `references/` directory with files but
 
 ---
 
+## Decision 7: Reviewer-style score defaults to a proxy when no explicit human review exists
+
+### Decision
+
+The report always includes a reviewer-style proxy score, but that score is labeled as a proxy whenever no explicit human reviewer input is available.
+
+### Rationale
+
+This avoids ambiguity in CI and local runs. A proxy score is still useful for comparing two skills or tracking regressions, but it should not be mistaken for a literal human judgment because the default CLI path only performs the mechanical rubric.
+
+### Trade-offs
+
+The proxy is less authoritative than a real human review. The benefit is that the report remains informative and comparable even when no reviewer is available.
+
+---
+
 ## Alternatives Considered
 
 | Alternative | Reason rejected |
