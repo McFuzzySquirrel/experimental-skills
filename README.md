@@ -25,7 +25,7 @@ The collection currently includes skills for:
 - Creating README files.
 - Turning conversations into structured meeting minutes.
 
-See the individual `SKILL.md` files under [`collection/skills/`](collection/skills/) and [`collection/agent-meeting-minutes/`](collection/agent-meeting-minutes/) for activation guidance and workflow details.
+See the individual `SKILL.md` files under [`collection/skills/`](collection/skills/) for activation guidance and workflow details.
 
 ## Using A Skill
 
