@@ -14,7 +14,7 @@ This repository stores reusable AI assistant skills that are valuable in day-to-
 
 ## Skill Changes
 
-- Keep reusable skills under `collection/skills/` or `collection/agent-meeting-minutes/` and preserve each skill's directory name.
+- Keep reusable skills under `collection/skills/` and preserve each skill's directory name.
 - Keep operational instructions in `SKILL.md`; place conditional supporting material in the skill's `references/` directory.
 - Include concrete gotchas, validation steps, and appropriate defaults or escape hatches in skills that are added or materially changed.
 - Use the skill-review workflow before treating a new or substantially changed skill as ready for reuse.

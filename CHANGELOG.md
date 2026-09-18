@@ -16,6 +16,7 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 
 - Expanded the repository README to describe the collection's purpose, layout, usage, development workflow, and documentation conventions.
 - Updated the `doc-map` workflow to prioritize `docs/` content and conventional documents such as `README`, `CHANGELOG`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, and `SECURITY` while allowing interactive overrides.
+- Moved the `agent-meeting-minutes` and `skill-review` skill packages into `collection/skills/` as reusable collection entries.
 
 ## 2026-07-18
 
