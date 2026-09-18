@@ -13,7 +13,7 @@ interface AdoEnv {
 
 function getAuth(token: string, type: "pat" | "bearer"): string {
   if (type === "bearer") {
-    return `Bearer ${token}`;
+    return "Bearer " + token;
   }
   return `Basic ${Buffer.from(`:${token}`).toString("base64")}`;
 }

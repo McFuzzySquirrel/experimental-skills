@@ -77,8 +77,6 @@ export const githubProvider: Provider = {
     }
 
     try {
-      // We use a minimal GitHub API call to avoid bundling @octokit/rest if not needed.
-      // Uses the GitHub REST API directly via fetch.
       const apiUrl = process.env.GITHUB_API_URL || "https://api.github.com";
 
       let postedCount = 0;
@@ -90,7 +88,7 @@ export const githubProvider: Provider = {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
             Accept: "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
@@ -107,7 +105,6 @@ export const githubProvider: Provider = {
       }
 
       // Post per-file inline comments as review comments if possible
-      // Only works if we're on a PR and have the commit SHA and file paths relative to repo root
       const headSha = process.env.GITHUB_SHA || process.env.BUILD_SOURCEVERSION || "";
       const repoRoot = detectRepoRoot();
 
@@ -140,7 +137,7 @@ export const githubProvider: Provider = {
               {
                 method: "POST",
                 headers: {
-                  Authorization: `Bearer ${token}`,
+                  Authorization: "Bearer " + token,
                   "Content-Type": "application/json",
                   Accept: "application/vnd.github+json",
                   "X-GitHub-Api-Version": "2022-11-28",
