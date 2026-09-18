@@ -31,11 +31,15 @@ Do not infer that every discovered document belongs in the map. If a document ha
 
 **Output:** An explicit approved set with final priorities, document groups, authority/purpose, update triggers, related paths, and an exclusion or deferral list.
 
+Before choosing storage, summarize the final accepted, excluded, and deferred paths and ask the user to confirm that selection. Do not create or modify a map while any candidate remains deferred; a user may revise priorities or selections at this checkpoint.
+
 ### Step 3: Choose map storage
 
 Recommend root-level `docmap.jsonl`. Use root-level `docmap.sqlite` only if the user requests SQLite or indexed filtering is materially useful. Load `references/map-schema.md` before creating or modifying either format.
 
 If a map already exists, identify its format and location. Preserve the existing format unless the user explicitly approves migration. If multiple maps exist, stop and ask which is authoritative rather than merging silently.
+
+When this skill exists in both a local development directory and a packaged collection directory, identify the documented source of truth and keep the other copy synchronized in the same change. Do not assume that one copy is generated or overwrite a differing copy without checking repository guidance.
 
 **Output:** One confirmed map path and format.
 
