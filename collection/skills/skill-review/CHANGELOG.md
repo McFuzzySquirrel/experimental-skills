@@ -9,6 +9,10 @@ Version numbers follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **False-positive nested reference chain warning** (`rubric.ts`): the structural check matched `references/[^)]+\.md.*references/[^)]+\.md`, and `[^)]` also matches newlines. Any skill without a `)` character that mentioned a document and loaded a reference on the same line was reported as chaining, even though nothing chained. The check is now evaluated per line and only fires when a single line names two distinct reference paths. A regression test in `rubric.test.ts` covers both the clean and flagged cases.
+
 ---
 
 ## [1.1.0] - 2026-07-22

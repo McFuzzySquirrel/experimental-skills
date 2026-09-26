@@ -71,3 +71,49 @@ test("calibration recognizes fenced command blocks and fallbacks", () => {
   assert.equal(calibrationScore?.score, 3);
   assert.equal(audit.reviewerStyleProxy, 3);
 });
+
+test("nested reference chain only reports distinct paths on the same line", () => {
+  // This fixture reproduces the false positive: the skill mentions `AGENTS.md`
+  // and then loads `references/agents-instructions.md` on the same line, while a
+  // bare `references/` appears earlier. A pattern using `[^)]+` for the path
+  // matches across newlines here, because the file contains no `)` at all.
+  const oneLevel = [
+    "---",
+    "name: regression",
+    "description: A regression fixture skill long enough to pass the description check.",
+    "---",
+    "",
+    "# Regression skill",
+    "",
+    "## Process",
+    "1. Use the templates in `references/` as a starting point.",
+    "2. Reconcile `AGENTS.md`. Load `references/agents-instructions.md` when drafting it.",
+    "",
+    "## Gotchas",
+    "**Nested `AGENTS.md` overrides root.** Do not paste it into a nested file.",
+  ].join("\n");
+
+  const clean = makeAudit(oneLevel);
+  assert.ok(
+    !clean.structuralIssues.some((issue) => issue.includes("nested reference chain")),
+    `unexpected chain warning: ${clean.structuralIssues.join("; ")}`,
+  );
+
+  const chained = [
+    "---",
+    "name: regression",
+    "description: A regression fixture skill long enough to pass the description check.",
+    "---",
+    "",
+    "# Regression skill",
+    "",
+    "## Process",
+    "1. Load `references/outer.md` for the overview and `references/inner.md` for the detail.",
+  ].join("\n");
+
+  const flagged = makeAudit(chained);
+  assert.ok(
+    flagged.structuralIssues.some((issue) => issue.includes("nested reference chain")),
+    "expected a chain warning for two distinct reference paths on one line",
+  );
+});

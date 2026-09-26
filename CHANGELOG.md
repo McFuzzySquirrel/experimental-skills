@@ -21,6 +21,10 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 - Moved the `agent-meeting-minutes` and `skill-review` skill packages into `collection/skills/` as reusable collection entries.
 - Updated `create-project-documentation` to append or reconcile a documentation-maintenance section in `AGENTS.md`, creating a root `AGENTS.md` when none exists, so generated documents stay current as the project changes. Extended its activation description to cover documentation upkeep and added matching validation and gotcha guidance.
 
+### Fixed
+
+- Fixed a false-positive "nested reference chain" warning in the `skill-review` rubric. The check used `[^)]+` for reference paths, which also matches newlines, so a skill that mentioned a document and loaded a reference on the same line was reported even when nothing chained. The check is now per line and only fires for two distinct reference paths on one line.
+
 ## 2026-07-18
 
 ### Added

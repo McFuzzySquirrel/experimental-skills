@@ -272,10 +272,14 @@ function checkStructural(
   // For each reference that says "load references/X.md", check if X.md itself has a "load references/" pattern
   // This is a simple heuristic - a more thorough check would read the referenced files
   if (loadRefs.length > 0) {
-    const nestedHint = skillMd.match(
-      /references\/[^)]+\.md.*references\/[^)]+\.md/gi,
-    );
-    if (nestedHint && nestedHint.length > 0) {
+    // A reference path is a single token. Excluding whitespace, backticks, and
+    // parentheses keeps the pattern from spanning newlines and swallowing prose,
+    // which previously made unrelated lines look like a reference chain.
+    const chainedLine = skillMd.split("\n").find((line) => {
+      const paths = line.match(/references\/[^\s`()]+?\.md/gi) ?? [];
+      return new Set(paths.map((p) => p.toLowerCase())).size > 1;
+    });
+    if (chainedLine) {
       issues.push(
         "Potential nested reference chain detected - keep to one level of depth",
       );
