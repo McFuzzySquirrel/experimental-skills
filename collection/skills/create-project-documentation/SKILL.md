@@ -1,6 +1,6 @@
 ---
 name: create-project-documentation
-description: Create or refresh a complete software-project documentation suite: ADRs, user guide, administrator guide, changelog, and versioned release notes. Use when a project needs launch documentation, a documentation audit, release preparation, or consistent operational and user-facing docs.
+description: Create or refresh a complete software-project documentation suite: ADRs, user guide, administrator guide, changelog, and versioned release notes, then install AGENTS.md instructions that keep those documents current. Use when a project needs launch documentation, a documentation audit, release preparation, consistent operational and user-facing docs, or documentation upkeep as the project changes.
 ---
 
 # Create Project Documentation
@@ -16,7 +16,8 @@ Use this skill to turn an implemented project into a coherent, fact-checked docu
 5. **Write task-oriented guides.** The user guide should describe goals, workflows, visible states, recovery, accessibility, and privacy. The administrator guide should describe prerequisites, installation, configuration, secrets, operations, backups, upgrades, troubleshooting, and security hardening. Use exact commands and configuration names found in the project.
 6. **Prepare release communication.** Add a Keep a Changelog-compatible changelog and release notes for the resolved version. Include highlights, compatibility, installation/upgrade notes, known limitations, validation status, and links to detailed docs. Do not claim tests, integrations, or production support that were not verified.
 7. **Refresh navigation and stale docs.** Correct stale status statements in component docs and add links to canonical guides and release notes. Preserve historical requirements and design documents; label their status rather than rewriting history.
-8. **Validate.** Check local Markdown links, headings and navigation, commands against scripts, configuration names against source, version references, secret leakage, unsupported claims, and spelling of product terms. Run the project’s available build/test/lint gates and `git diff --check`.
+8. **Install documentation upkeep instructions.** Find the nearest applicable `AGENTS.md`. If one exists, reconcile a delimited documentation-maintenance section in place instead of appending a duplicate; if none exists, propose a root `AGENTS.md` containing that section. Name the document paths actually written in this run rather than generic placeholders, and drop entries for documents that were not created. Show the exact diff and obtain confirmation before writing. If the user declines, leave `AGENTS.md` unchanged and report that upkeep instructions were not installed. Load `references/agents-instructions.md` when drafting or editing this section.
+9. **Validate.** Check local Markdown links, headings and navigation, commands against scripts, configuration names against source, version references, secret leakage, unsupported claims, and spelling of product terms. Confirm the `AGENTS.md` section appears exactly once and names only documents that exist. Run the project’s available build/test/lint gates and `git diff --check`.
 
 ## Required Evidence Rules
 
@@ -28,7 +29,7 @@ Use this skill to turn an implemented project into a coherent, fact-checked docu
 
 ## Outputs
 
-Default paths are `CHANGELOG.md`, `docs/adr/`, `docs/user-guide.md`, `docs/admin-guide.md`, and `docs/releases/`. Adapt paths to the repository’s existing convention when one exists. Keep `SKILL.md` generic; project facts belong in generated documentation.
+Default paths are `CHANGELOG.md`, `docs/adr/`, `docs/user-guide.md`, `docs/admin-guide.md`, `docs/releases/`, and a `Documentation Maintenance` section in `AGENTS.md`. Adapt paths to the repository’s existing convention when one exists, and keep the upkeep section's paths in step with the documents actually produced. Keep `SKILL.md` generic; project facts belong in generated documentation.
 
 Load these references when writing the corresponding artifact:
 
@@ -37,6 +38,7 @@ Load these references when writing the corresponding artifact:
 - Load `references/admin-guide-template.md` when the project is deployed, hosted, configured, or operated.
 - Load `references/changelog-template.md` when establishing or refreshing change history.
 - Load `references/release-notes-template.md` when preparing a versioned release.
+- Load `references/agents-instructions.md` when creating or reconciling the `AGENTS.md` documentation-maintenance section.
 
 ## Validation Checklist
 
@@ -48,6 +50,7 @@ Load these references when writing the corresponding artifact:
 - [ ] ADRs have stable identifiers and complete decision sections.
 - [ ] User and administrator audiences are clearly separated.
 - [ ] Release notes link to upgrade, user, and administrator guidance.
+- [ ] `AGENTS.md` contains a single documentation-maintenance section naming the documents created in this run, reconciled rather than duplicated.
 - [ ] Local Markdown links resolve, including links from nested docs.
 - [ ] Build, test, lint, and documentation checks have been run where available.
 
@@ -62,3 +65,9 @@ Load these references when writing the corresponding artifact:
 **False integration claims.** A contract stub, mock, or provider test does not prove compatibility with a live external product. Name the validation boundary and the untested external runtime explicitly.
 
 **Broken nested links.** Relative links are resolved from the linking file, not the repository root. Validate links after moving content and use paths relative to each document.
+
+**Upkeep rules drift from the document set.** An `AGENTS.md` section is only useful while it matches reality. Fill it from the paths actually written, prune entries for documents that were not created or were renamed, and reconcile it whenever the document set changes.
+
+**Appending duplicates the rule.** Two documentation-maintenance sections leave precedence ambiguous. Reconcile the existing section in place, keep the stricter of the two rules, and preserve unrelated prose. If no `AGENTS.md` exists, create a root file rather than a directory-scoped one that will not be discovered.
+
+**Nested `AGENTS.md` overrides root.** A directory-scoped file can narrow or override root guidance. Do not paste root-wide maintenance authority into a nested file, and check for a conflicting scoped rule before editing the root file.
