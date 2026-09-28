@@ -27,7 +27,7 @@ Keep the directory name `doc-map` unchanged. The package is self-contained and i
 
 The skill:
 
-1. Discovers tracked documentation and optionally asks whether untracked files should be included.
+1. Discovers tracked documentation while skipping every dot-prefixed path, optionally asks whether untracked files should be included, and reports how many dot-prefixed paths were skipped.
 2. Assigns suggested priorities, including higher defaults for `docs/` and conventional files such as `README`, `CHANGELOG`, `CONTRIBUTING`, `SECURITY`, and `CODE_OF_CONDUCT`.
 3. Walks through interactive document selection with individual and batch commands such as `accept all high`, `exclude generated`, and `set README.md critical`.
 4. Shows the proposed map before writing it.
@@ -43,6 +43,10 @@ Suggested priorities are recommendations, not automatic inclusion:
 | `high` | `docs/` content and conventional project documents |
 | `normal` | Other active human-maintained documentation |
 | `low` | Archived, historical, example-only, or informational material |
+
+## Excluded Paths
+
+Dot-prefixed paths are never discovered, listed, or mapped, and this is not a user-overridable default. This covers directories such as `.agents/`, `.opencode/`, `.claude/`, `.cursor/`, `.github/`, and `.vscode/`, plus root-level dotfiles such as `.cursorrules` and `.editorconfig`. They hold agent, editor, and platform configuration rather than maintained project documentation, so the skill filters them before building the inventory. It reports only the number of skipped paths and never names them, and a broad selector such as `**` or `all` cannot bring them back.
 
 ## JSONL Records
 
@@ -77,7 +81,7 @@ If `jq` is unavailable, use Python:
 python3 -c 'import json, pathlib; [json.loads(line) for line in pathlib.Path("docmap.jsonl").read_text().splitlines()]'
 ```
 
-Also confirm that mapped paths are unique, repository-relative, and present unless explicitly marked `missing`, then run:
+Also confirm that mapped paths are unique, repository-relative, not dot-prefixed, and present unless explicitly marked `missing`, then run:
 
 ```bash
 git diff --check

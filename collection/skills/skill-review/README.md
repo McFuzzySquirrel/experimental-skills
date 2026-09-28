@@ -188,8 +188,15 @@ skill-review/
 │       ├── scripts/            # Embedded copy of audit scripts
 │       └── package.json
 ├── docs/
+│   ├── architecture.md         # Two-layer review architecture and diagram
 │   └── adr/
-│       └── 0001-skill-review-architecture.md
+│       ├── index.md            # Decision record index
+│       ├── 0001-static-heuristic-scoring.md
+│       ├── 0002-six-scoring-axes.md
+│       ├── 0003-modular-provider-pattern.md
+│       ├── 0004-typescript-tsx-no-compile-step.md
+│       ├── 0005-portable-standalone-skill-package.md
+│       └── 0006-on-disk-folder-presence-scoring.md
 ├── CHANGELOG.md
 ├── package.json
 └── README.md
@@ -218,4 +225,6 @@ Run `npm install` inside the `skill-review/` directory (or the standalone skill 
 
 ## Architecture
 
-See [`docs/adr/0001-skill-review-architecture.md`](docs/adr/0001-skill-review-architecture.md) for the full Architecture Decision Record covering: static heuristics vs LLM scoring, the six-axis rubric, the modular provider pattern, TypeScript + tsx runtime, the portable skill package, and on-disk folder detection.
+The audit ships as two complementary layers: a static heuristic tool that runs in CI, and an agent skill that runs on demand. See [`docs/architecture.md`](docs/architecture.md) for the diagram and how the two layers relate.
+
+The reasons behind it — static heuristics vs LLM scoring, the six-axis rubric, the modular provider pattern, TypeScript + tsx runtime, the portable skill package, and on-disk folder detection — are recorded one decision per record in [`docs/adr/`](docs/adr/index.md).

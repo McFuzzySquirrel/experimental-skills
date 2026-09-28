@@ -4,7 +4,7 @@
 
 ## JSONL
 
-Write one object per line. Use `record_type: "document"` for document records. Required document fields are `record_type`, `path`, `format`, `status`, `source_of_truth`, `priority`, `group`, `authority`, `purpose`, `update_when`, and `generated`. Use repository-relative POSIX paths. Optional `map_metadata` and `checklist` records store map-wide guidance without pretending that guidance is a document path.
+Write one object per line. Use `record_type: "document"` for document records. Required document fields are `record_type`, `path`, `format`, `status`, `source_of_truth`, `priority`, `group`, `authority`, `purpose`, `update_when`, and `generated`. Use repository-relative POSIX paths with no `./` prefix, and reject any dot-prefixed path: agent and tooling configuration under directories such as `.agents/`, `.opencode/`, or `.github/`, and root-level dotfiles, are never mapped documents. Optional `map_metadata` and `checklist` records store map-wide guidance without pretending that guidance is a document path.
 
 Recommended record:
 
@@ -44,9 +44,9 @@ Store arrays as JSON text and timestamps as UTC ISO 8601. Before completing an u
 
 ```sql
 SELECT path, COUNT(*) FROM documents GROUP BY path HAVING COUNT(*) > 1;
-SELECT path FROM documents WHERE path LIKE '/%' OR path LIKE '%\\%';
+SELECT path FROM documents WHERE path LIKE '/%' OR path LIKE '%\\%' OR path GLOB '*/.*' OR path GLOB '.*';
 ```
 
-The first query must return no rows. The second detects absolute or Windows-style paths that violate the repository-relative convention.
+The first query must return no rows. The second detects absolute or Windows-style paths that violate the repository-relative convention, plus any dot-prefixed path that should have been filtered during discovery.
 
 SQLite implementations may store `map_metadata` and `checklist` records in separate tables, or keep them as JSON in a map metadata table. Do not force map-wide instructions into the `documents` table.

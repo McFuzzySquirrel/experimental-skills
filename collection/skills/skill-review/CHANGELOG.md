@@ -9,6 +9,12 @@ Version numbers follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Split the bundled architecture ADR into one record per decision** (`docs/adr/`). `0001-skill-review-architecture.md` covered six decisions in a single file, which left it with no meaningful status and no way to supersede any one decision. It is replaced by `0001-static-heuristic-scoring.md`, `0002-six-scoring-axes.md`, `0003-modular-provider-pattern.md`, `0004-typescript-tsx-no-compile-step.md`, `0005-portable-standalone-skill-package.md`, and `0006-on-disk-folder-presence-scoring.md`, all keeping the original 2026-07-22 date and Accepted status.
+- **Added `docs/architecture.md` and `docs/adr/index.md`.** The `System Architecture: Two-Layer Review` section, its Mermaid diagram, and the layer comparison table moved out of the ADR, because they describe the system rather than a decision. The new index lists every record. The README file-layout tree and Architecture section were updated to match.
+- Negative-consequence bullets in records 0002, 0003, 0004, and 0006 are marked as inferred, because the original record stated no downside for those decisions. Review and confirm or cut them.
+
 ### Fixed
 
 - **False-positive nested reference chain warning** (`rubric.ts`): the structural check matched `references/[^)]+\.md.*references/[^)]+\.md`, and `[^)]` also matches newlines. Any skill without a `)` character that mentioned a document and loaded a reference on the same line was reported as chaining, even though nothing chained. The check is now evaluated per line and only fires when a single line names two distinct reference paths. A regression test in `rubric.test.ts` covers both the clean and flagged cases.

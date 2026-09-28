@@ -19,14 +19,15 @@ Priority is case-insensitive and is a starting recommendation, not consent to ma
 | Derived output | No | Generated from another document or build step; map the source instead. |
 | Archived material | No | Historical content not expected to change with current code. Include only on request. |
 | Duplicate or mirror | No | Same content appears elsewhere; identify the canonical path. |
-| Scoped instruction | Usually yes | `AGENTS.md` or equivalent that controls work in a directory; record its scope. |
+| Scoped instruction | Usually yes | `AGENTS.md` or equivalent that controls work in a directory; record its scope. Dot-prefixed copies are excluded, not classified. |
+| Tooling or agent configuration | No | Any dot-prefixed path, such as `.agents/`, `.opencode/`, `.github/`, or a root-level dotfile. Filtered before the inventory is built, so it never becomes a candidate. |
 | Untracked candidate | Ask | Include only when the user confirms untracked files are in scope. |
 
 Use this interactive response protocol:
 
 1. Show candidates in indexed groups, starting with `critical`, then `high`, `normal`, and `low`.
 2. Ask for `accept`, `accept with priority`, `exclude`, `inspect`, or `defer` for the current candidate or group.
-3. Accept batch selectors such as `all high`, `docs/**`, and `README*`; expand each selector to exact paths before recording it.
+3. Accept batch selectors such as `all high`, `docs/**`, and `README*`; expand each selector to exact paths before recording it, and drop dot-prefixed paths during expansion so a broad selector cannot re-admit them.
 4. Show the updated accepted, excluded, and deferred lists after every batch.
 5. Before leaving selection, require an explicit decision on every deferred candidate and confirm the final count by priority.
 
