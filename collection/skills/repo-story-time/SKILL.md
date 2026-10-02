@@ -1,11 +1,6 @@
 ---
 name: repo-story-time
-description: >
-  Tell the story of a repository from its structure and Git history. Use when someone
-  asks how a codebase came to be, wants repository archaeology, an onboarding narrative,
-  a "why does this look like this" explainer, or a technical write-up of a project's
-  architecture and evolution. Produces docs/REPOSITORY_SUMMARY.md and
-  docs/THE_STORY_OF_THIS_REPO.md from evidence rather than impression.
+description: "Tell the story of a repository from its structure and Git history. Use when someone asks how a codebase came to be, wants repository archaeology, an onboarding narrative, a \"why does this look like this\" explainer, or a technical write-up of a project's architecture and evolution. Produces docs/REPOSITORY_SUMMARY.md and docs/THE_STORY_OF_THIS_REPO.md from evidence rather than impression."
 ---
 
 # Repo Story Time
