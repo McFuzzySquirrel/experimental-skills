@@ -1,9 +1,6 @@
 ---
 name: repo-story-time
-description: >
-  Tell the story of a repository from its structure and Git history. Use when someone
-  asks how a codebase came to be, wants repository archaeology, an onboarding
-  narrative, or an architecture overview of how a project evolved.
+description: "Tell the story of a repository from its structure and Git history. Use when someone asks how a codebase came to be, wants repository archaeology, an onboarding narrative, or an architecture overview of how a project evolved."
 ---
 
 # Repo Story Time
