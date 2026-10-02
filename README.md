@@ -25,6 +25,7 @@ The collection currently includes skills for:
 - Creating README files.
 - Turning conversations into structured meeting minutes.
 - Installing cross-platform development rules into a repository's `AGENTS.md`.
+- Telling the story of a repository from its structure and Git history.
 
 See the individual `SKILL.md` files under [`collection/skills/`](collection/skills/) for activation guidance and workflow details.
 
