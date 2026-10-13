@@ -30,6 +30,7 @@ Notable changes to the `mcfuzzy-skills` collection are recorded here.
 
 ### Changed
 
+- Updated the `create-project-documentation` ADR template to use stable `ADR-NNNN` front-matter IDs, scoped file globs, imperative agent rules, and concrete verification checks while retaining its MADR decision rationale. Aligned the skill's ADR-writing and validation guidance.
 - Decoupled `create-project-documentation` from `doc-map`. The documentation skill now scopes edits to its selected output artifacts and no longer hands them off for mapping or `AGENTS.md` maintenance; `doc-map` remains an independently invoked, general-purpose mapper for any user-approved repository documents. Synchronized the local development copy of `doc-map` with the packaged skill.
 - Added `add-cross-platform-guidance` to the repository README's skill list.
 - Updated `create-project-documentation` to write ADRs in the MADR 3.0.0 form: `Deciders`, a `Technical Story` line, context and problem statement, decision drivers, considered options, decision outcome with positive and negative consequences, per-option `Good, because` / `Bad, because` pros and cons, and typed `Links`. The status vocabulary now includes `Rejected` and `Superseded by ADR-NNNN`, the date is documented as the last update, and records hold one decision each named `NNNN-kebab-title.md`. Step 4, the output paths, the reference list, the validation checklist, and the gotchas were updated to match, including the new rules on splitting bundled records and editing both sides when superseding.
