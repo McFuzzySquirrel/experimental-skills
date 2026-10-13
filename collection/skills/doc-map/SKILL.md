@@ -1,11 +1,11 @@
 ---
 name: doc-map
-description: "Discover repository documentation, let the user select documents to maintain, create or update a document reference map, and add AGENTS.md instructions for maintain docs, update documentation, and check documentation requests."
+description: "Discover repository documentation, let the user select which documents to map, create or update a document reference map, and add AGENTS.md instructions for maintaining documentation. Works independently of documentation-creation workflows."
 ---
 
 # Skill: Document Reference Map
 
-Use this skill when a user asks to maintain docs, update documentation, or check documentation. It inventories repository documentation, records only the documents the user approves, and connects that map to repository instructions without overwriting unrelated guidance.
+Use this skill to maintain a document reference map and its repository instructions. It does not create or refresh project documentation and is independently invocable. Inventory the repository broadly, but map only documents the user approves; do not assume that documents must have been created by `create-project-documentation` or any other skill.
 
 Use root-level `docmap.jsonl` by default because it is portable, reviewable, and diff-friendly. Offer root-level `docmap.sqlite` when the user needs indexed queries or the repository has too many records for comfortable line-based review; use another approved location only when the user requests it. Keep one document record per line, plus optional `map_metadata` and `checklist` records for map-wide guidance. Every selected document record includes a user-overridable priority: `critical`, `high`, `normal`, or `low`.
 

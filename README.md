@@ -18,10 +18,10 @@ The repository is both a library and a workshop: skills can be used in other pro
 The collection currently includes skills for:
 
 - Creating and refining skills.
-- Maintaining repository documentation maps with interactive selection and priority metadata.
+- Mapping any user-approved repository documentation independently from documentation creation.
 - Reviewing skills against quality and packaging guidelines.
 - Updating the skill-review process as best practices evolve.
-- Creating project documentation.
+- Creating or refreshing a defined project documentation suite without maintaining a separate document map.
 - Creating README files.
 - Turning conversations into structured meeting minutes.
 - Installing cross-platform development rules into a repository's `AGENTS.md`.

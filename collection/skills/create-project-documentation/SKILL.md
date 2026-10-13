@@ -1,13 +1,13 @@
 ---
 name: create-project-documentation
-description: Create or refresh a complete software-project documentation suite: README, ADRs, user guide, administrator guide, changelog, and versioned release notes, then hand the resulting documents to doc-map for the document map and AGENTS.md upkeep instructions. Use when a project needs launch documentation, a documentation audit, release preparation, consistent operational and user-facing docs, or documentation upkeep as the project changes.
+description: "Create or refresh a complete software-project documentation suite: README, ADRs, user guide, administrator guide, changelog, and versioned release notes. Use when a project needs launch documentation, a documentation audit, release preparation, consistent operational and user-facing docs, or documentation upkeep as the project changes."
 ---
 
 # Create Project Documentation
 
 Use this skill to turn an implemented project into a coherent, fact-checked documentation set. It works for applications, libraries, services, CLIs, platforms, and monorepos. Document implemented behavior separately from roadmap or aspirational behavior.
 
-This skill writes the documents. Use `doc-map` to register them in the document map and to install the `AGENTS.md` documentation-maintenance section; this skill does not edit `AGENTS.md` itself.
+This skill creates or refreshes only the documentation artifacts selected for this run, using the default paths listed under **Outputs** when the user does not specify otherwise. It does not create or maintain a document reference map, edit `AGENTS.md`, or require another skill to complete its work.
 
 ## Process
 
@@ -18,7 +18,7 @@ This skill writes the documents. Use `doc-map` to register them in the document 
 5. **Write task-oriented guides.** The user guide should describe goals, workflows, visible states, recovery, accessibility, and privacy. The administrator guide should describe prerequisites, installation, configuration, secrets, operations, backups, upgrades, troubleshooting, and security hardening. Use exact commands and configuration names found in the project.
 6. **Prepare release communication.** Add a Keep a Changelog-compatible changelog and release notes for the resolved version. Include highlights, compatibility, installation/upgrade notes, known limitations, validation status, and links to detailed docs. Do not claim tests, integrations, or production support that were not verified.
 7. **Create or refresh the README.** Use the section structure in `references/readme-template.md`. Write the README after the document set exists so it can link to the guides, ADR index, and release notes; when updating an existing README, fill gaps and correct stale content while preserving its voice, badges, and custom sections instead of rewriting it. All 15 sections are required: keep every heading, and report a section as not applicable and obtain approval before dropping it, recording the reason. Link to `CONTRIBUTING.md` and `LICENSE` when the repository has them, and write those sections in full when it does not. Verify the Getting Started commands against the manifest, scripts, or observed output before publishing them.
-8. **Refresh navigation and stale docs.** Correct stale status statements in component docs and add links to canonical guides and release notes. This step owns component and feature docs; do not rewrite the README here. Preserve historical requirements and design documents; label their status rather than rewriting history.
+8. **Refresh navigation within the selected document set.** Keep links, status statements, and navigation consistent among the artifacts selected for this run. Do not edit unrelated component or feature documents, or historical documents outside that set; report other documentation that may need attention separately. Do not rewrite the README in this step.
 9. **Validate.** Check local Markdown links, headings and navigation, commands against scripts, configuration names against source, version references, secret leakage, unsupported claims, and spelling of product terms. Confirm the README contains every required section and links only to documents that exist. Run the project’s available build/test/lint gates and `git diff --check`.
 
 ## Required Evidence Rules
@@ -31,7 +31,7 @@ This skill writes the documents. Use `doc-map` to register them in the document 
 
 ## Outputs
 
-Default paths are `README.md`, `CHANGELOG.md`, `docs/adr/` with one file per record named `NNNN-kebab-title.md`, `docs/user-guide.md`, `docs/admin-guide.md`, and `docs/releases/`. Adapt paths to the repository’s existing convention when one exists. End by telling the user to run `doc-map` so the documents written in this run are registered in the document map and named in the `AGENTS.md` documentation-maintenance section. Keep `SKILL.md` generic; project facts belong in generated documentation.
+Default paths are `README.md`, `CHANGELOG.md`, `docs/adr/` with one file per record named `NNNN-kebab-title.md`, `docs/user-guide.md`, `docs/admin-guide.md`, and `docs/releases/`. Adapt paths to the repository’s existing convention when one exists. These paths and any user-approved additions define this run’s scope: do not create or refresh other documentation artifacts implicitly. Keep `SKILL.md` generic; project facts belong in generated documentation.
 
 Load these references when writing the corresponding artifact:
 
@@ -57,7 +57,7 @@ Load these references when writing the corresponding artifact:
 - [ ] README contains all 15 required sections, and every dropped section has a recorded justification.
 - [ ] README links resolve to documents that exist, and it links to rather than duplicates the user guide, admin guide, ADR index, and release notes.
 - [ ] README Getting Started commands were verified against the manifest, scripts, or observed output, and What’s Next is not presented as shipped behavior.
-- [ ] The handoff names the documents created in this run so `doc-map` can register them.
+- [ ] Changes are limited to the artifacts selected for this run; unrelated documents and repository-wide documentation instructions were left untouched.
 - [ ] Local Markdown links resolve, including links from nested docs.
 - [ ] The ADR index lists every record and is linked from the README.
 - [ ] Build, test, lint, and documentation checks have been run where available.
@@ -84,4 +84,4 @@ Load these references when writing the corresponding artifact:
 
 **A quickstart that does not run.** Getting Started is the most read and most copied part of a README. Run the commands, or match them to the package manifest and task scripts, before publishing. An unverified command costs every reader who follows it.
 
-**Handing off without the created paths.** `doc-map` can only register documents it knows about. Report the exact paths written in this run when handing off, or the document map and `AGENTS.md` section will reference documents that were never created.
+**Scope creep during navigation updates.** A stale link or status statement in another component document can make it tempting to expand the run. Keep edits within the selected output set and report other documentation that may need attention separately.
