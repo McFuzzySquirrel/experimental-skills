@@ -156,7 +156,7 @@ Each skill is scored 1–3 on six axes. The overall score is the average, rounde
 | **Procedural clarity** | Declares output, no process | Has a process section, missing steps | Step-by-step with decision criteria |
 | **Progressive disclosure** | Everything in one file | Partial use of `references/` or `assets/` | `references/` or `assets/` used with load triggers |
 | **Calibration** | Uniform prescriptiveness | Some structure, could tighten | Exact commands for fragile ops + escape hatches |
-| **Validation** | No verification step | `## Validation` with at least one checkbox | Checklist of 3+ steps with a script or self-check |
+| **Validation** | No verification step | `## Validation` with at least one checkbox | Checklist of 3+ steps with a script or self-check; behavior-heavy skills also provide eval evidence or an explicit exemption |
 
 **Score tiers:**
 - 2.5–3.0 🟢 Strong — follows best practices well
@@ -214,6 +214,9 @@ One or more paths passed to `--files` do not exist. Check the path is correct re
 
 **Score lower than expected despite having a `references/` folder**  
 Make sure the `SKILL.md` contains at least one link to a file in the `references/` folder and a load trigger phrase (e.g., `load when` or `load references/...`). The tool counts both on-disk folder presence and in-file references.
+
+**"Structural issues found for metadata"**
+Check that `name` follows the Agent Skills naming rules and that `description` is non-empty, at most 1024 characters, and explains the task and activation context. Skills with bundled scripts should also document non-interactive usage, helpful errors, and machine-readable output where applicable.
 
 **Provider posts no comment**  
 Check that the required environment variables are set for your provider (see [Providers](#providers)). Run with `--provider stdout` first to confirm the audit itself is working.

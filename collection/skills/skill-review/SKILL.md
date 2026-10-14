@@ -52,10 +52,13 @@ For each skill, read `SKILL.md` and any `references/`, `scripts/`, or `assets/` 
 
 Also check:
 - [ ] `name` matches parent directory name
-- [ ] `description` is specific and includes keywords for activation
+- [ ] `name` follows the Agent Skills format: 1-64 lowercase letters, numbers, and hyphens, with no leading, trailing, or consecutive hyphens
+- [ ] `description` is non-empty, no longer than 1024 characters, and states when the skill applies
 - [ ] YAML frontmatter is valid
 - [ ] File references use relative paths from skill root
 - [ ] No more than one level of reference chain depth
+- [ ] Bundled scripts are non-interactive, document `--help` or usage, and emit actionable errors; use structured output and safety controls when applicable
+- [ ] Skills that produce artifacts or execute workflows have realistic eval cases, an edge case, and observable assertions, unless an explicit exemption is justified
 
 Before applying any edits, write a short review plan that lists the top issues, the proposed changes, and the reason for each change. Present that plan to the user first.
 
@@ -147,6 +150,17 @@ After applying changes, regenerate the audit report with updated scores. Show th
 - **Don't move content that's essential for activation.** The first ~100 lines of `SKILL.md` define the skill's purpose and trigger conditions. Keep that inline even if it is verbose.
 - **Load triggers must be specific.** "Load `references/api-errors.md` if the API returns a non-200 status code" is good. "See references/ for details" is useless.
 - **Validation scripts in `scripts/` must be self-contained.** Don't recommend scripts the user can't run without missing dependencies.
+- **Agent-facing scripts must not prompt for TTY input.** Use flags, environment variables, or stdin and return a clear error with usage guidance when required input is missing.
+- **Keep script output machine-readable where it is consumed by another step.** Put structured results on stdout and diagnostics on stderr so the agent can recover from failures.
+- **Do not require eval infrastructure for purely informational skills.** Record the reason for an exemption instead of treating the absence of `evals/evals.json` as an automatic failure.
+
+## Validation
+
+- [ ] Run the targeted rubric tests from the skill directory: `npm test`
+- [ ] Run the type check: `npm run typecheck`
+- [ ] Confirm every structural finding names the violated metadata or activation rule
+- [ ] For behavior-heavy skills, inspect eval cases and assertions or record an explicit exemption
+- [ ] Re-run the audit after fixing findings and confirm the report no longer contains stale structural issues
 
 ---
 

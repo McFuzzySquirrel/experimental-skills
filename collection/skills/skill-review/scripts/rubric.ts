@@ -241,9 +241,20 @@ function checkStructural(
   const issues: string[] = [];
 
   if (typeof rawFrontmatter.name === "string") {
+    const frontmatterName = rawFrontmatter.name;
     if (rawFrontmatter.name !== parentDir) {
       issues.push(
         `Frontmatter \`name\` ("${rawFrontmatter.name}") does not match parent directory ("${parentDir}")`,
+      );
+    }
+    if (
+      frontmatterName.length < 1 ||
+      frontmatterName.length > 64 ||
+      !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(frontmatterName) ||
+      frontmatterName.includes("--")
+    ) {
+      issues.push(
+        "Frontmatter `name` must be 1-64 lowercase alphanumeric characters and hyphens, without leading, trailing, or consecutive hyphens",
       );
     }
   } else {
@@ -251,10 +262,24 @@ function checkStructural(
   }
 
   const desc = rawFrontmatter.description;
-  if (typeof desc !== "string" || desc.trim().length < 20) {
+  if (typeof desc !== "string" || desc.trim().length === 0) {
     issues.push(
-      "`description` is missing, too short, or not specific enough for activation",
+      "`description` is missing or empty",
     );
+  } else {
+    const trimmedDescription = desc.trim();
+    if (trimmedDescription.length > 1024) {
+      issues.push("`description` must not exceed 1024 characters");
+    }
+    if (
+      !/\b(?:use|when|for|audit|auditing|create|extract|review|generate|manage|process|help)\b/i.test(
+        trimmedDescription,
+      )
+    ) {
+      issues.push(
+        "`description` should describe the task and when the skill applies so activation matches user intent",
+      );
+    }
   }
 
   // Check relative path references

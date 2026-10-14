@@ -11,6 +11,8 @@ Version numbers follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **Expanded metadata and activation checks** (`rubric.ts`): validate Agent Skills name constraints, the 1024-character description limit, and task/activation wording instead of only checking parent-directory equality and minimum description length.
+- **Updated review guidance** (`SKILL.md` and portable template): added non-interactive script requirements, structured-output guidance, behavior-heavy skill eval expectations with informational-skill exemptions, and a self-validation checklist.
 - **Split the bundled architecture ADR into one record per decision** (`docs/adr/`). `0001-skill-review-architecture.md` covered six decisions in a single file, which left it with no meaningful status and no way to supersede any one decision. It is replaced by `0001-static-heuristic-scoring.md`, `0002-six-scoring-axes.md`, `0003-modular-provider-pattern.md`, `0004-typescript-tsx-no-compile-step.md`, `0005-portable-standalone-skill-package.md`, and `0006-on-disk-folder-presence-scoring.md`, all keeping the original 2026-07-22 date and Accepted status.
 - **Added `docs/architecture.md` and `docs/adr/index.md`.** The `System Architecture: Two-Layer Review` section, its Mermaid diagram, and the layer comparison table moved out of the ADR, because they describe the system rather than a decision. The new index lists every record. The README file-layout tree and Architecture section were updated to match.
 - Negative-consequence bullets in records 0002, 0003, 0004, and 0006 are marked as inferred, because the original record stated no downside for those decisions. Review and confirm or cut them.

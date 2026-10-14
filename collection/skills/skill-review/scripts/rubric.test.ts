@@ -117,3 +117,43 @@ test("nested reference chain only reports distinct paths on the same line", () =
     "expected a chain warning for two distinct reference paths on one line",
   );
 });
+
+test("structural checks enforce skill metadata constraints and activation intent", () => {
+  const audit = auditSkill({
+    skillMd: [
+      "---",
+      "name: Bad--Name",
+      "description: A skill.",
+      "---",
+      "",
+      "# Regression skill",
+    ].join("\n"),
+    skillName: "regression",
+    skillPath: "/tmp/regression/SKILL.md",
+    hasRefsDir: false,
+    hasAssetsDir: false,
+    hasScriptsDir: false,
+  });
+
+  assert.ok(
+    audit.structuralIssues.some((issue) => issue.includes("lowercase alphanumeric")),
+    "expected invalid name issue",
+  );
+  assert.ok(
+    audit.structuralIssues.some((issue) => issue.includes("describe the task")),
+    "expected activation intent issue",
+  );
+});
+
+test("structural checks accept valid metadata", () => {
+  const audit = makeAudit([
+    "---",
+    "name: regression",
+    "description: Use this skill when reviewing regression fixtures and validating audit behavior.",
+    "---",
+    "",
+    "# Regression skill",
+  ].join("\n"));
+
+  assert.equal(audit.structuralIssues.length, 0);
+});
